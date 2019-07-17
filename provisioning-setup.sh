@@ -32,6 +32,6 @@ LIGHT_CYAN='\033[1;36m'
 LIGHT_GRAY='\033[0;37m'
 WHITE='\033[1;37m'
 
-printConfig=cat ${HOME}/.kube/config-ibm
-printUser=$kubectl -n kube-system describe secret $($kubectl -n kube-system get secret | awk '/admin-user-token/{print $1}') | awk '/^token:/{print $2}'
+printConfig="cat ${HOME}/.kube/config-ibm"
+printUser="$kubectl -n kube-system describe secret $($kubectl -n kube-system get secret | awk '/admin-user-token/{print $1}') | awk '/^token:/{print $2}'"
 
