@@ -13,7 +13,18 @@
 #
 # TODO: Make it use the IBM internal IP.
 # `tail -2` outputs only the last two lines, which are the ones we want for slave connections.
+echo
+
+echo -e "${RED}################################"
+echo -e "${RED}#      Connection string       #"
+echo -e "${RED}################################"
+
+echo -e "${BLUE}"
+
 kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=${local_ip} | tail -2
+
+echo -e "${LIGHT_GRAY}"
+
 mkdir -p ~/.kube
 yes | cp -i /etc/kubernetes/admin.conf ${HOME}/.kube/config-ibm
 
@@ -69,7 +80,23 @@ EOF
 
 iex "$kubectl apply -f admin-user.yaml"
 
-iex "$kubectl -n kube-system get secret" | awk '/admin-user-token/{print $1}'
+echo -e "${RED}################################"
+echo -e "${RED}#      User token              #"
+echo -e "${RED}################################"
+
+echo -e "${BLUE}"
 
 $kubectl -n kube-system describe secret $($kubectl -n kube-system get secret | awk '/admin-user-token/{print $1}') | awk '/^token:/{print $2}'
+
+echo -e "${LIGHT_GRAY}"
+
+echo -e "${RED}################################"
+echo -e "${RED}#      Kube config             #"
+echo -e "${RED}################################"
+
+echo -e "${BLUE}"
+
+cat ${HOME}/.kube/config-ibm
+
+echo -e "${LIGHT_GRAY}"
 
