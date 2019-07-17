@@ -1,6 +1,36 @@
 #!/bin/bash
 
-. ./provisioning-setup.sh
+local_ip=$(ifconfig | awk '/inet (10.165(\.[0-9]+)+)/ {print $2}')
+kubectl="kubectl --kubeconfig=${HOME}/.kube/config-ibm"
+
+# Get the IP of this node, in the VPN. (10.0.0.0/8).
+distro=$(cat /etc/*-release | awk -F '=' '/^ID=/ {print $2}')
+codename=$(cat /etc/*-release | awk -F '=' '/^VERSION_CODENAME=/ {print $2}')
+
+if [ "$codename" == "" ]; then
+	codename=$(cat /etc/*-release | awk -F '[=()]' '/^VERSION=/ {print $3}')
+fi
+
+function iex() {
+	$1
+}
+
+BLACK='\033[0;30m'
+DARK_GRAY='\033[1;30m'
+RED='\033[0;31m'
+LIGHT_RED='\033[1;31m'
+GREEN='\033[0;32m'
+LIGHT_GREEN='\033[1;32m'
+ORANGE='\033[0;33m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+LIGHT_BLUE='\033[1;34m'
+PURPLE='\033[0;35m'
+LIGHT_PURPLE='\033[1;35m'
+CYAN='\033[0;36m'
+LIGHT_CYAN='\033[1;36m'
+LIGHT_GRAY='\033[0;37m'
+WHITE='\033[1;37m'
 
 ################################
 # Set up the master.           #
@@ -40,7 +70,7 @@ iex "$kubectl create -f driver-installer-deafined.yaml"
 iex "$kubectl create -f device-plugin-deafined.yaml"
 
 # Flannel.
-iex "$kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/62e44c867a2846fefb68bd5f178daf4da3095ccb/Documentation/kube-flannel.yml"
+iex "$kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
 
 # Dashboard.
 iex "$kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta1/aio/deploy/recommended.yaml"
@@ -99,4 +129,7 @@ echo -e "${BLUE}"
 cat ${HOME}/.kube/config-ibm
 
 echo -e "${LIGHT_GRAY}"
+
+printConfig="cat ${HOME}/.kube/config-ibm"
+printUser="$kubectl -n kube-system describe secret $($kubectl -n kube-system get secret | awk '/admin-user-token/{print $1}') | awk '/^token:/{print $2}'"
 
