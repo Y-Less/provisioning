@@ -1,6 +1,6 @@
 #!/bin/bash
 
-wget https://raw.githubusercontent.com/Y-Less/provisioning/master/provisioning-main.sh > provisioning-generic.sh
+wget https://raw.githubusercontent.com/Y-Less/provisioning/master/provisioning-generic.sh > provisioning-generic.sh
 chmod 777 provisioning-generic.sh
 
 wget https://raw.githubusercontent.com/Y-Less/provisioning/master/provisioning-setup.sh > provisioning-setup.sh
